@@ -144,8 +144,11 @@ docker run --rm \
 脚本会安装构建依赖、生成签名密钥、调用 `abuild`，安装产物并运行
 `test/test_pyzbar_qr.py`。成功后 apk 位于 `dist/`。
 
-构建依赖：`build-base autoconf automake libtool pkgconf gettext-dev
+构建依赖：`build-base autoconf automake libtool pkgconf gettext-dev git
 abuild openssl ca-certificates python3`。
+
+> `git` 是 `autopoint` 解包 gettext 0.20 基础设施时需要的（它会对
+> gettext 自带的 git archive 执行 `git checkout`），不是用来拉源码的。
 
 > abuild 3.2.0 以 root 运行时，`-F` 只对父进程生效；打包子进程仍会报
 > "Do not run abuild as root"。脚本通过导出 `forceroot=1` 传递给子进程。

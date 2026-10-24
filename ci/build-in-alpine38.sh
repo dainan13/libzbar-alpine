@@ -28,7 +28,7 @@ if ! apk update; then
 	apk update
 fi
 apk add --no-cache \
-	build-base autoconf automake libtool pkgconf gettext-dev \
+	build-base autoconf automake libtool pkgconf gettext-dev git \
 	abuild openssl ca-certificates python3
 
 echo "==> Preparing signing key"

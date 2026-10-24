@@ -17,7 +17,9 @@ url="https://github.com/mchehab/zbar"
 arch="all"
 license="LGPL-2.0-or-later"
 depends=""
-makedepends="autoconf automake libtool pkgconf gettext-dev"
+# git is required by autopoint: gettext 0.19.8 uses its bundled git archive
+# to check out the gettext 0.20 infrastructure requested by configure.ac.
+makedepends="autoconf automake libtool pkgconf gettext-dev git"
 subpackages="$pkgname-dev $pkgname-doc"
 source="https://deb.debian.org/debian/pool/main/z/zbar/zbar_${pkgver}.orig.tar.gz"
 builddir="$srcdir/zbar-$pkgver"
