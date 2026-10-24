@@ -1,0 +1,17 @@
+# build output (apk files + per-build public signing key)
+/dist/
+/distfiles/
+*.apk
+
+# generated signing keys
+*.rsa
+*.rsa.pub
+
+# python
+__pycache__/
+*.py[cod]
+.pytest_cache/
+
+# editor / OS noise
+.DS_Store
+*.swp

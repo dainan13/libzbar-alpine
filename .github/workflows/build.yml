@@ -1,0 +1,68 @@
+name: build-apk
+
+on:
+  push:
+    branches: [main, master]
+    tags: ['v*']
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Alpine 3.8 x86_64
+    runs-on: ubuntu-latest
+    timeout-minutes: 30
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Build and test in Alpine 3.8
+        env:
+          ABUILD_PRIVKEY: ${{ secrets.ABUILD_PRIVKEY }}
+        run: |
+          docker run --rm \
+            -e ABUILD_PRIVKEY \
+            -v "$GITHUB_WORKSPACE:/src" \
+            -w /src \
+            alpine:3.8 \
+            /bin/sh /src/ci/build-in-alpine38.sh
+
+      - name: List artifacts
+        run: ls -l dist
+
+      - name: Upload apk artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: libzbar-apk-alpine38-x86_64
+          path: dist/
+          if-no-files-found: error
+          retention-days: 14
+
+  release:
+    name: GitHub Release
+    if: startsWith(github.ref, 'refs/tags/v')
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      actions: read
+    steps:
+      - name: Download apk artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: libzbar-apk-alpine38-x86_64
+          path: dist
+
+      - name: Publish release
+        uses: softprops/action-gh-release@v2
+        with:
+          files: dist/*
+          generate_release_notes: true
+          fail_on_unmatched_files: true
